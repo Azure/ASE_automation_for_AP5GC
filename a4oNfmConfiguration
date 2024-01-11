@@ -1,0 +1,10 @@
+{ 
+  "helm.versions": "v3", 
+  "Microsoft.CustomLocation.ServiceAccount": "azurehybridnetwork-networkfunction-operator", 
+  "meta.helm.sh/release-name": "networkfunction-operator", 
+  "meta.helm.sh/release-namespace": "azurehybridnetwork", 
+  "app.kubernetes.io/managed-by": "helm", 
+  "helm.release-name": "networkfunction-operator", 
+  "helm.release-namespace": "azurehybridnetwork", 
+  "managed-by": "helm" 
+} 
