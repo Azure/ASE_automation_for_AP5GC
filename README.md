@@ -19,6 +19,7 @@ This single script performs the following tasks:
 4. You should have Ownership priveleges on the Subscription you are using for ASE and AP5GC.
 5. Your subscription should have been authorized for AP5GC usage.
 6. ASE RG needs to be created as part of prerequisite steps & owner permission on RG is needed. 
+7. Need to unblock the script before running it. Please go to the path where the script is present & unblock the script using "Unblock-File PowerShellBasedConfiguration.psm1"
 
 *You can use the default PowerShell 5 already installed on your Windows laptop
 
@@ -28,10 +29,10 @@ This single script performs the following tasks:
 3.  You have access to the ASE IP over a management/OAM port.
 4.  All of the steps mentioned under under "**Order and set up your Azure Stack Edge Pro device(s)**" in "https://review.learn.microsoft.com/en-us/azure/private-5g-core/complete-private-mobile-network-prerequisites?branch=main&pivots=ase-pro-gpu" needs to be done manully before running the script.
 5. Confirm that as part of steps in 4. above, your ASE has Certificates generated, Activated and in the Kubernetes (Preview) section you have enabled `an Azure Private MEC solution in your environment` option. Check that on the Azure portal, under the ASE Resource, you do not have any further ASE software upgrade prompts.
-6.  Fill in all your parameters in the Excel file: `parameters_file_ASE_AP5GC_v1.0`
+6.  Fill in all your parameters in the Excel file: `parameters_file_single_ASE_AP5GC`
 7.  Save the file and close the file/Excel.
 8.  Open PowerShell as Admin and run `az login` (Select your right tenantID in the browser pop up and signin)
-9.	Execute the script in your PowerShell console, `.\one_script_ASE_v1.0.ps1` (initially you will be prompted on a browser window to sign in to your right tenant - this is for Az cmdlet)
+9.	Execute the script in your PowerShell console, `.\one_script_single_ASE.ps1` (initially you will be prompted on a browser window to sign in to your right tenant - this is for Az cmdlet)
 
 Ideally all the ASE resources should be deployed within 45 minutes.
 

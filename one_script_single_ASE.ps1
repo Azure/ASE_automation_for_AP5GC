@@ -1,6 +1,5 @@
-using module ..\ASE_automated_deployment\PowerShellBasedConfiguration.psm1
+using module .\PowerShellBasedConfiguration.psm1
 Import-Module -Name ImportExcel
-Unblock-File ..\ASE_automated_deployment\PowerShellBasedConfiguration.psm1
 $date = Get-date
 Write-Host "Info" "Timestamp is $date"
 Set-StrictMode -version 1
@@ -96,12 +95,6 @@ function Validate-KubernetesServiceIps {
         Write-Host "Error" "`"$range`" and `"$kubernetesNodeIps`" must be in the same /24 subnet"
         Exit 1
     }
-    $gap = $match.Matches.Groups[2].Value - $kubernetesNodeIpsMatch.Matches.Groups[4].Value
-    if ($gap -ne 1)
-    {
-        Write-Host "Error" "`"$range`" must start immediately after `"$kubernetesNodeIps`""
-        Exit 1
-    }
 }
 function Validate-Guid($guidString) {
     $guid = [System.Guid]::New($guidString)
@@ -120,7 +113,7 @@ function Validate-ArcResourceName($name) {
         Exit 1
     }
 }
-Import-Excel .\parameters_file_ASE_AP5GC_v1.0.xlsx | Export-Csv -Delimiter ',' -Path .\one_script_csv.csv -NoTypeInformation
+Import-Excel .\parameters_file_single_ASE_AP5GC.xlsx | Export-Csv -Delimiter ',' -Path .\one_script_csv.csv -NoTypeInformation
 $csvfile = import-csv .\one_script_csv.csv -Delimiter ","
     foreach ($row in $csvfile) {
         if($row.Parameter -eq "ASEip")
@@ -2570,38 +2563,31 @@ ValidateDeviceConfigurationStatus
     $output
     $date = Get-date
     Write-Host "Info" "Timestamp is $date"
-    Start-Sleep -Seconds 300
-        # TO SEE STATE OF THE ARC SETUP
-        $uri2 = "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$ASEresourceGroup/providers/Microsoft.DataBoxEdge/DataBoxEdgeDevices/$ASEname/roles/kubernetes/addons?api-version=2022-04-01-preview"
-        #Write-Host "Info" "URI = $uri2"
-        $uri2
-        $output2 = Invoke-AzRestMethod -Method GET -Uri $uri2
-        $output2.Content
-        $output2
-        $date = Get-date
-        Write-Host "Info" "Timestamp is $date"
-    Start-Sleep -Seconds 300
-        # TO SEE STATE OF THE ARC SETUP
-        $uri2 = "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$ASEresourceGroup/providers/Microsoft.DataBoxEdge/DataBoxEdgeDevices/$ASEname/roles/kubernetes/addons?api-version=2022-04-01-preview"
-        #Write-Host "Info" "URI = $uri2"
-        $uri2
-        $output2 = Invoke-AzRestMethod -Method GET -Uri $uri2
-        $output2.Content
-        $output2
-        $date = Get-date
-        Write-Host "Info" "Timestamp is $date"
-    Start-Sleep -Seconds 200
-        $date = Get-date
-        Write-Host "Info" "Timestamp is $date"
-        # TO SEE STATE OF THE ARC SETUP
-        $uri2 = "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$ASEresourceGroup/providers/Microsoft.DataBoxEdge/DataBoxEdgeDevices/$ASEname/roles/kubernetes/addons?api-version=2022-04-01-preview"
-        #Write-Host "Info" "URI = $uri2"
-        $uri2
-        $output2 = Invoke-AzRestMethod -Method GET -Uri $uri2
-        $output2.Content
-        $output2
-        $date = Get-date
-        Write-Host "Info" "Timestamp is $date"
+    $counter = 0
+    while ($true)
+    {
+        $counter++
+        Start-Sleep -Seconds 60
+
+        # Check the status of Arc setup
+        $arcConfigurationOutput = Invoke-AzRestMethod -Method GET -Uri $uri
+        $arcConfigurationJsonOutput = $arcConfigurationOutput.Content | ConvertFrom-Json
+        $arcConfigurationJsonOutput
+        $arcConfigurationProvisioningState = $arcConfigurationJsonOutput.properties.provisioningState
+        if ($arcConfigurationProvisioningState -eq "Created")
+        {
+            Write-Host "Info" "Arc cluster created successfully"
+            break
+        }
+
+        if ($counter -gt 29)
+        {
+            Write-Host "Error" "Arc cluster still creating after 30 minutes - exiting"
+            Exit 1
+        }
+
+        Write-Host "Info" "Arc cluster still creating - wait for another minute"
+    }
 ##### START OF 1 MANUAL STEP FROM PORTAL #####
 <#
     # Enable Arc connection
