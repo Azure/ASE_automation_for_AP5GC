@@ -1,3 +1,5 @@
+#// Copyright (c) Microsoft Corporation.
+#// Licensed under the MIT license.
 using module .\PowerShellBasedConfiguration.psm1
 Import-Module -Name ImportExcel
 $date = Get-date
@@ -1028,24 +1030,10 @@ function InitializeAP5GC
     $ASEresourceGroup = $a.parameters.ASEresourceGroup.value
     $date = Get-date
     Write-Host "Info" "Timestamp is $date"
-#    Write-Host "Info" "Enabling Cloud VM management - Enabling Virtual Machines on the ASE"
-#    az account set --subscription $a.parameters.subscriptionId.value
     Write-Host "Info" "Running Connect-AzAccount for tenant id: $tenantId and sub id: $subscriptionId"
     Connect-AzAccount -Tenant $tenantId -SubscriptionId $subscriptionId
     Write-Host "Info" "Running Set-AzAccount for sub id: $subscriptionId"
     Set-AzContext -Subscription $a.parameters.subscriptionId.value
-#    $token =  az account get-access-token | ConvertFrom-Json
-#    $headers = @{Authorization = "Bearer $($token.accessToken)"; "Content-Type" = "application/json" }
-#    Body is optional for non GET calls
-#    $body = Get-Content "$($PSScriptRoot)/cloudVM_body_template.json"
-#    $uri = "https://edge.management.azure.com/subscriptions/$subscriptionId/resourcegroups/$ASEresourceGroup/providers/Microsoft.DataboxEdge/dataBoxEdgeDevices/$ASEname/roles/CloudEdgeManagementRole?api-version=2023-02-01"
-#    Write-Host "Info" "URI = $uri"
-#    $output = Invoke-WebRequest -Method PUT -Headers $headers -Uri $uri -Body $body  # body is not needed for GET calls
-#    $output
-#    Write-Host "Info" "Enabled CloudVM on the ASE, waiting for 2 mins before proceeding"
-#    Start-Sleep -Seconds 120
-    $date = Get-date
-    Write-Host "Info" "Timestamp is $date"
     Write-Host "Info" "Using the following input parameters to setup ASE $($a | ConvertTo-Json -Depth 6)"
 #>
 # Enable AKS for AP5GC on ASE #
@@ -2588,27 +2576,6 @@ ValidateDeviceConfigurationStatus
 
         Write-Host "Info" "Arc cluster still creating - wait for another minute"
     }
-##### START OF 1 MANUAL STEP FROM PORTAL #####
-<#
-    # Enable Arc connection
-    Write-Host "Info" "Setting up Arc connection $($Global:arcClusterName)"
-    InvokeHcsCommand -ScriptBlock {
-        param($customLocationsObjectId, $a.parameters.subscriptionId.value, $a.parameters.ASEresourceGroup.value, $a.parameters.arcLocation.value, $Global:arcClusterName, $tenantId, $clientId, $clientSecretPlainText)
-        $clientSecret = ConvertTo-SecureString -String $clientSecretPlainText -AsPlainText -Force
-        Add-AzureDataBoxEdgeArcRole -ClientId $clientId -ClientSecret $clientSecret -Name "arcConfiguration" -SubscriptionId $a.parameters.subscriptionId.value -ResourceGroupName $a.parameters.ASEresourceGroup.value -ResourceName $Global:arcClusterName -Location $a.parameters.arcLocation.value -TenantId $tenantId -CustomLocationsObjectId $customLocationsObjectId} -ArgumentList $customLocationsObjectId, $a.parameters.subscriptionId.value, $a.parameters.ASEresourceGroup.value, $a.parameters.arcLocation.value, $Global:arcClusterName, $tenantId, $clientId, $clientSecretPlainText
-    WaitForArcClusterConnection -ResourceGroup $a.parameters.ASEresourceGroup.value -ArcClusterName $Global:arcClusterName
-##### END OF 1 MANUAL STEP FROM PORTAL #####
-# Generate the kubeconfig file for 'core' namespace - can be used for monitoring and troubleshooting later #
-    $username = "~\EdgeUser"
-    $secPassword = ConvertTo-SecureString $a.parameters.defaultASEPassword.value -AsPlainText -Force
-    $cred = New-Object System.Management.Automation.PSCredential($username, $secPassword)
-    $sessopt = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
-    $minishellSession = New-PSSession -ComputerName $ASEip -ConfigurationName "Minishell" -Credential $cred -UseSSL -SessionOption $sessopt
-    Write-Host "Info" "Generate the kubeconfig file for 'core' namespace - can be used for monitoring and troubleshooting later"
-    Invoke-Command -Session $minishellSession -ScriptBlock {New-HcsKubernetesNamespace -Namespace "core"}
-    Invoke-Command -Session $minishellSession -ScriptBlock {New-HcsKubernetesUser -UserName "core"} | Out-File -FilePath .\kubeconfig-core.yaml
-    Invoke-Command -Session $minishellSession -ScriptBlock {Grant-HcsKubernetesNamespaceAccess -Namespace "core" -UserName "core"}
-#>
 # Move to az CLI, set subscription #
     $date = Get-date
     Write-Host "Info" "Timestamp is $date"
