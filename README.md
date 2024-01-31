@@ -15,8 +15,8 @@ The script supports Azure Stack Edge Pro with 1 or 2 GPU and Azure Stack Edge Pr
 10. The inputs to be given in excel format & validations of input will be done as part of the script.
 
 ## Prerequisites
-1. A Windows laptop. You will need Administrator rights over your machine. Make sure that Excel and PowerShell 5 are installed.
-2. PowerShell 5. You may already have it installed: run PowerShell from the Start menu and use the `$PSVersionTable` command to verify the version.
+1. A Windows laptop. You will need Administrator rights over your machine. Make sure that Excel is installed.
+2. PowerShell 5.x. (Other versions of PowerShell are not supported.) You may already have it installed: run PowerShell from the Start menu and use the `$PSVersionTable` command to verify the version.  
 3. The ImportExcel and Azure Resources (az.Resources) Powershell modules. To verify, run PowerShell as an Administrator and then execute the following:
    
    ```
