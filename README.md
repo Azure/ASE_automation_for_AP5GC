@@ -1,6 +1,6 @@
 # About this script
 This script streamlines and automates the process of preparing Azure Stack Edge (ASE) for use with Azure Private 5G Core ('AP5GC').
-The script supports Azure Stack Edge Pro with 1 or 2 GPU and Azure Stack Edge Pro 2, running ASE software versions 2309 & 2312 only. It supports singleton installations of AP5GC.
+The script supports Azure Stack Edge Pro and Azure Stack Edge Pro 2, running ASE software versions 2309 & 2312 only. It supports singleton installations of AP5GC.
 
 ## Actions performed by the script
 1. Takes in all input parameters (IP's, number of DNN's, subID, tenantID, ASE password, MTU, vlan, interface names etc) in a single Excel file.
