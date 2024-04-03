@@ -1077,7 +1077,7 @@ if (($applianceInfo.FriendlySoftwareVersionNumber -ne "2312") -and ($applianceIn
 }
 # Add the delta vswitches, vnetwork, k8s IP's and enable compute
 $oldDeviceConfig = Get-DeviceConfiguration
-Write-Host "Info" "Current running config on this ASE: $($oldDeviceConfig | ConvertTo-Json -Depth 6)g"
+Write-Host "Info" "Current running config on this ASE: $($oldDeviceConfig | ConvertTo-Json -Depth 6)"
 Write-Host "Current device config: $($oldDeviceConfig | ConvertTo-Json -Depth 6)"
 $vSwitches = $(if ($applianceInfo.FriendlySoftwareVersionNumber -eq "2312") {@(
     @{
