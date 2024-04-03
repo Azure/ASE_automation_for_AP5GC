@@ -2,6 +2,21 @@
 #// Licensed under the MIT license.
 using module .\PowerShellBasedConfiguration.psm1
 Import-Module -Name ImportExcel
+# Check if the script is run in Powershell 5. If not, then exit.
+$psVersion = $PSVersionTable.PSVersion.Major
+if ($psVersion -ne 5) {
+    Write-Host "This script requires PowerShell 5. Exiting..."
+    Exit
+}
+# Check if the script is run as an administrator
+$isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+
+# If not run as an administrator, display an error message and exit
+if (-not $isAdmin) {
+    Write-Host "This script must be executed with PowerShell in administrator mode."
+    Exit
+}
+
 $date = Get-date
 Write-Host "Info" "Timestamp is $date"
 Set-StrictMode -version 1
@@ -36,12 +51,12 @@ function Validate-IpAddressInSubnet {
     $ipAddress = $address -as [IPAddress]
     $networkAddress = $network -as [IPAddress]
     $subnetMask = $mask -as [IPAddress]
-    $ipAdressBytes = $ipAddress.GetAddressBytes();
+    $ipAddressBytes = $ipAddress.GetAddressBytes();
     $subnetMaskBytes = $subnetMask.GetAddressBytes();
-    $calculatedNetworkAddressBytes = [System.Byte[]]::CreateInstance([System.Byte], $ipAdressBytes.Length);
+    $calculatedNetworkAddressBytes = [System.Byte[]]::CreateInstance([System.Byte], $ipAddressBytes.Length);
     for (($i=0); $i -lt $calculatedNetworkAddressBytes.Length; $i++)
     {
-        $calculatedNetworkAddressBytes[$i] = ($ipAdressBytes[$i] -band $subnetMaskBytes[$i]);
+        $calculatedNetworkAddressBytes[$i] = ($ipAddressBytes[$i] -band $subnetMaskBytes[$i]);
     }
     $calculatedNetworkAddress = [System.Net.IPAddress]($calculatedNetworkAddressBytes)
     if($calculatedNetworkAddress -ne $networkAddress)
@@ -115,7 +130,7 @@ function Validate-ArcResourceName($name) {
         Exit 1
     }
 }
-Import-Excel .\parameters_file_single_ASE_AP5GC.xlsx | Export-Csv -Delimiter ',' -Path .\one_script_csv.csv -NoTypeInformation
+Import-Excel .\parameters_file_single_ASE_AP5GC.xlsx -WorkSheetname "Datafill" | Export-Csv -Delimiter ',' -Path .\one_script_csv.csv -NoTypeInformation
 $csvfile = import-csv .\one_script_csv.csv -Delimiter ","
     foreach ($row in $csvfile) {
         if($row.Parameter -eq "ASEip")
