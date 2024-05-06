@@ -59,10 +59,15 @@ The script supports Azure Stack Edge Pro and Azure Stack Edge Pro 2, running ASE
    ```
    Unblock-File PowerShellBasedConfiguration.psm1
    ```
-3. Complete all of the steps mentioned under [Order and set up your Azure Stack Edge Pro device(s)][3].
-4. Verify that your laptop has access to the ASE's IP address over the management/OAM port, for example, by pointing a web browser at the IP.
-5. Confirm that your ASE has Certificates generated, Activated and in the Kubernetes (Preview) section you have enabled the "an Azure Private MEC solution in your environment" option. 
-6. Check that on the Azure portal, under the ASE Resource, you do not have any unresolved prompts or warnings, such as recommendations to upgrade ASE software.
+3. In case your laptop does not have permissions to execute powershell scripts, the Set-ExecutionPolicy cmdlet changes PowerShell execution policies for Windows computers. Run this inside your PowerShell terminal: 
+   ```
+   Set-ExecutionPolicy Unrestricted -Scope CurrentUser
+   ```
+4. Complete all of the steps mentioned under [Order and set up your Azure Stack Edge Pro device(s)][3].
+5. Verify that your laptop has access to the ASE's IP address over the management/OAM port, for example, by pointing a web browser at the IP.
+6. Confirm that your ASE has Certificates generated, Activated and in the Kubernetes (Preview) section you have enabled the "an Azure Private MEC solution in your environment" option.
+7. IMPORTANT: After selecting "an Azure Private MEC solution in your environment", you might require to upgrade the ASE K8s firmware again before running the script if that box was unchecked.
+8. Check that on the Azure portal, under the ASE Resource, you do not have any unresolved prompts or warnings, such as recommendations to upgrade ASE software. If you do, please follow the steps to perform the necessary ASE firmware upgrades.
 
 ## Running the script
 
